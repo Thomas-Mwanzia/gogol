@@ -65,6 +65,8 @@ export default function Login(){
       const data = await res.json()
       if (data.user) {
         toast.success('Seller signed in')
+        // refresh client auth state so UserContext has the new user before navigation
+        try{ if (typeof refetch === 'function') await refetch() }catch(e){}
         router.push('/seller')
       } else {
         setError(data.msg || 'Verification failed')
