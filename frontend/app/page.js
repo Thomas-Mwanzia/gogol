@@ -25,7 +25,7 @@ export default async function Home(){
 
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight text-gray-900">Fresh, Fast, and Unforgettable</h1>
 
-          <p className="text-lg text-gray-600 max-w-lg">Sourdough bases, locally sourced toppings, and express delivery across Parklands & Westlands. Order your favourite pizza or build one — delivered hot and fast.</p>
+          <p className="text-lg text-gray-600 max-w-lg">Quality ingredients, custom toppings, affordable prices and delivery anywhere in Nairobi.</p>
 
           <div className="flex flex-wrap items-center gap-3 mt-4">
             <Link href="/menu" className="inline-flex items-center gap-3 bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-full shadow-lg transition">Order Now</Link>
