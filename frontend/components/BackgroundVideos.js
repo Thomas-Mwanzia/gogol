@@ -36,17 +36,17 @@ export default function BackgroundVideos({ sources = ['/videos/bg1.mp4', '/video
   const currentSrc = resolveSrc(sources[index])
 
   return (
-    <div aria-hidden className="fixed inset-0 -z-10 pointer-events-none">
+    <div aria-hidden className="fixed inset-0 -z-10 pointer-events-none overflow-hidden">
       <video
         ref={videoRef}
         muted
         playsInline
-        className="w-full h-full object-cover min-h-screen"
+        className="w-full h-full object-cover min-h-screen scale-110 blur-sm"
       >
         {currentSrc && <source src={currentSrc} />}
       </video>
-      {/* subtle overlay so foreground content stays readable */}
-      <div className="absolute inset-0 bg-black/30" />
+      {/* very subtle overlay for text readability */}
+      <div className="absolute inset-0 bg-black/10" />
     </div>
   )
 }

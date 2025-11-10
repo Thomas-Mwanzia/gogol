@@ -9,10 +9,10 @@ import BackgroundVideos from '../components/BackgroundVideos'
 
 export default async function Home(){
   return (
-    <main className="min-h-screen bg-gradient-to-b from-white via-yellow-50 to-white">
+    <main className="min-h-screen">
       {/* Background videos played from public/videos directory */}
       <BackgroundVideos sources={['/videos/vid1.mp4', '/videos/vid2.mp4', '/videos/vid3.mp4']} />
-      <section className="max-w-7xl mx-auto px-6 py-16 lg:py-24 grid gap-12 lg:grid-cols-2 items-center">
+      <section className="relative max-w-7xl mx-auto px-6 py-16 lg:py-24 grid gap-12 lg:grid-cols-2 items-center bg-white/70 backdrop-blur-sm">
         <div className="space-y-6">
           <div className="inline-flex items-center gap-3 bg-red-50 text-red-700 px-3 py-1 rounded-full text-sm font-medium w-max shadow-sm">
             <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" aria-hidden>
@@ -47,7 +47,7 @@ export default async function Home(){
             </div>
           </div>
 
-          <div className="mt-8 bg-white/90 rounded-xl p-4 shadow-sm flex items-center gap-4">
+          <div className="mt-8 bg-white/80 backdrop-blur-sm rounded-xl p-4 shadow-sm flex items-center gap-4">
             <img src={chefImg?.src || chefImg} alt="Chef" className="w-14 h-14 rounded-full object-cover" />
             <div>
               <div className="text-sm font-semibold">Chef's Special</div>
@@ -60,7 +60,7 @@ export default async function Home(){
           <div className="rounded-3xl overflow-hidden shadow-2xl ring-1 ring-gray-100">
             <img src={heroImg?.src || heroImg} alt="GoGol signature pizza" className="w-full h-96 object-cover" />
           </div>
-          <div className="absolute -bottom-10 left-6 bg-white p-3 rounded-xl shadow-md flex items-center gap-3">
+          <div className="absolute -bottom-10 left-6 bg-white/90 backdrop-blur-sm p-3 rounded-xl shadow-md flex items-center gap-3">
             <div className="w-12 h-12 rounded-full overflow-hidden">
               <img src={pizza1Img?.src || pizza1Img} alt="mini" className="w-full h-full object-cover" />
             </div>
@@ -72,12 +72,12 @@ export default async function Home(){
         </div>
       </section>
 
-      <section className="max-w-7xl mx-auto px-6 mt-12">
+      <section className="max-w-7xl mx-auto px-6 mt-12 bg-white/80 backdrop-blur-sm py-8 rounded-xl">
         <h2 className="text-2xl font-semibold">Popular picks</h2>
         <p className="text-sm text-gray-500">Fan favourites — loved across Parklands & Westlands</p>
         <div className="mt-6 grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
           {/* creative cards — still static images but with nicer layout */}
-          <article className="bg-white rounded-2xl shadow hover:shadow-lg transition overflow-hidden">
+          <article className="bg-white/90 backdrop-blur-sm rounded-2xl shadow hover:shadow-lg transition overflow-hidden">
             <img src={pizza1Img?.src || pizza1Img} alt="Pepperoni" className="w-full h-44 object-cover" />
             <div className="p-4">
               <div className="flex items-center justify-between">
@@ -139,7 +139,7 @@ export default async function Home(){
         </div>
       </section>
 
-      <section className="max-w-7xl mx-auto px-6 mt-12 bg-white rounded-xl p-8 shadow-sm">
+      <section className="max-w-7xl mx-auto px-6 mt-12 bg-white/80 backdrop-blur-sm rounded-xl p-8 shadow-sm">
         <div className="grid md:grid-cols-3 gap-6 items-center">
           <div>
             <h3 className="text-xl font-semibold">How it works</h3>
