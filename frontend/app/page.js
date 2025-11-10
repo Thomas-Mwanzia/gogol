@@ -1,14 +1,20 @@
 import Link from 'next/link'
-import heroImg from './hero-pizza.jpeg'
-import chefImg from './chef.jpeg'
-import pizza1Img from './pizza1.jpeg'
-import pizza2Img from './pizza2.jpeg'
-import pizza3Img from './pizza3.jpeg'
-import pizza4Img from './pizza4.jpeg'
+import heroImg from './hero-pizza.jpg'
+import chefImg from './chef.jpg'
+import pizza1Img from './pizza1.jpg'
+import pizza2Img from './pizza2.jpg'
+import pizza3Img from './pizza3.jpg'
+import pizza4Img from './pizza4.jpg'
+import BackgroundVideos from '../components/BackgroundVideos'
+import vid1 from './vid1.mp4'
+import vid2 from './vid2.mp4'
+import vid3 from './vid3.mp4'
 
 export default async function Home(){
   return (
     <main className="min-h-screen bg-gradient-to-b from-white via-yellow-50 to-white">
+      {/* Background videos (place your 3 video files in public/videos as bg1.mp4, bg2.mp4, bg3.mp4 or change sources) */}
+  <BackgroundVideos sources={[vid1, vid2, vid3]} />
       <section className="max-w-7xl mx-auto px-6 py-16 lg:py-24 grid gap-12 lg:grid-cols-2 items-center">
         <div className="space-y-6">
           <div className="inline-flex items-center gap-3 bg-red-50 text-red-700 px-3 py-1 rounded-full text-sm font-medium w-max shadow-sm">
@@ -79,7 +85,7 @@ export default async function Home(){
             <div className="p-4">
               <div className="flex items-center justify-between">
                 <h3 className="font-semibold">Pepperoni Classic</h3>
-                <span className="text-sm font-bold">KSh 900</span>
+                <span className="text-sm font-bold">KSh 1200</span>
               </div>
               <p className="text-sm text-gray-500 mt-2">Savory, spicy, and cheesy.</p>
               <div className="mt-4 flex items-center justify-between">
@@ -94,7 +100,7 @@ export default async function Home(){
             <div className="p-4">
               <div className="flex items-center justify-between">
                 <h3 className="font-semibold">Margherita</h3>
-                <span className="text-sm font-bold">KSh 800</span>
+                <span className="text-sm font-bold">KSh 1250</span>
               </div>
               <p className="text-sm text-gray-500 mt-2">Fresh basil, gooey cheese.</p>
               <div className="mt-4 flex items-center justify-between">
@@ -109,7 +115,7 @@ export default async function Home(){
             <div className="p-4">
               <div className="flex items-center justify-between">
                 <h3 className="font-semibold">BBQ Chicken</h3>
-                <span className="text-sm font-bold">KSh 950</span>
+                <span className="text-sm font-bold">KSh 1300</span>
               </div>
               <p className="text-sm text-gray-500 mt-2">Smoky and sweet.</p>
               <div className="mt-4 flex items-center justify-between">
@@ -124,7 +130,7 @@ export default async function Home(){
             <div className="p-4">
               <div className="flex items-center justify-between">
                 <h3 className="font-semibold">Veggie Delight</h3>
-                <span className="text-sm font-bold">KSh 850</span>
+                <span className="text-sm font-bold">KSh 1350</span>
               </div>
               <p className="text-sm text-gray-500 mt-2">Loaded with fresh veggies.</p>
               <div className="mt-4 flex items-center justify-between">
