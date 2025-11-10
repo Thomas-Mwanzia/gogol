@@ -3,50 +3,92 @@ import React, { useEffect, useRef, useState } from 'react'
 
 export default function BackgroundVideos({ sources = ['/videos/bg1.mp4', '/videos/bg2.mp4', '/videos/bg3.mp4'] }){
   const [index, setIndex] = useState(0)
-  const videoRef = useRef(null)
+  const [nextIndex, setNextIndex] = useState(1)
+  const [isTransitioning, setIsTransitioning] = useState(false)
+  const currentVideoRef = useRef(null)
+  const nextVideoRef = useRef(null)
 
   // helper to resolve imported asset modules or plain strings
   const resolveSrc = (s) => {
     if (!s) return ''
     if (typeof s === 'string') return s
-    // Next.js asset imports sometimes provide an object with .src or .default
     return s.src || s.default || ''
   }
 
   useEffect(() => {
-    const vid = videoRef.current
-    if (!vid) return
+    const currentVideo = currentVideoRef.current
+    const nextVideo = nextVideoRef.current
+    if (!currentVideo || !nextVideo) return
 
-    const src = resolveSrc(sources[index])
-    if (!src) return
+    currentVideo.src = resolveSrc(sources[index])
+    nextVideo.src = resolveSrc(sources[nextIndex])
 
-    // load current source and attempt to play
-    vid.src = src
-    vid.load()
-    const tryPlay = async () => {
-      try { await vid.play() } catch (e) { /* autoplay may be blocked; user interaction may be required */ }
+    const loadAndPlay = async (video) => {
+      try {
+        await video.load()
+        // Set playback quality to high
+        if (video.getVideoPlaybackQuality) {
+          const quality = video.getVideoPlaybackQuality()
+          if (quality && quality.totalVideoFrames > 0) {
+            video.playbackQuality = 'high'
+          }
+        }
+        await video.play()
+      } catch (e) { console.error('Playback error:', e) }
     }
-    tryPlay()
 
-    const onEnded = () => setIndex(i => (i + 1) % sources.length)
-    vid.addEventListener('ended', onEnded)
-    return () => vid.removeEventListener('ended', onEnded)
-  }, [index, sources])
+    loadAndPlay(currentVideo)
+    // Preload next video
+    nextVideo.load()
 
-  const currentSrc = resolveSrc(sources[index])
+    const handleTransition = async () => {
+      setIsTransitioning(true)
+      // Start playing next video
+      await loadAndPlay(nextVideo)
+      
+      // Update indices
+      const newIndex = (index + 1) % sources.length
+      const newNextIndex = (newIndex + 1) % sources.length
+      
+      setIndex(newIndex)
+      setNextIndex(newNextIndex)
+      setIsTransitioning(false)
+    }
+
+    currentVideo.addEventListener('timeupdate', () => {
+      // Start transition 0.5 seconds before video ends
+      if (currentVideo.duration - currentVideo.currentTime <= 0.5 && !isTransitioning) {
+        handleTransition()
+      }
+    })
+
+    return () => {
+      if (currentVideo) {
+        currentVideo.pause()
+        currentVideo.removeEventListener('timeupdate', handleTransition)
+      }
+      if (nextVideo) {
+        nextVideo.pause()
+      }
+    }
+  }, [index, nextIndex, sources, isTransitioning])
 
   return (
     <div aria-hidden className="fixed inset-0 -z-10 pointer-events-none overflow-hidden">
       <video
-        ref={videoRef}
+        ref={currentVideoRef}
         muted
         playsInline
-        className="w-full h-full object-cover min-h-screen scale-110 blur-sm"
-      >
-        {currentSrc && <source src={currentSrc} />}
-      </video>
-      {/* very subtle overlay for text readability */}
-      <div className="absolute inset-0 bg-black/10" />
+        className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}
+      />
+      <video
+        ref={nextVideoRef}
+        muted
+        playsInline
+        className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${isTransitioning ? 'opacity-100' : 'opacity-0'}`}
+      />
+      {/* subtle overlay for readability */}
+      <div className="absolute inset-0 bg-black/20" />
     </div>
   )
 }
