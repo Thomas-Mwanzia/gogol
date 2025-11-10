@@ -75,10 +75,7 @@ export default async function Home(){
             <div className="w-12 h-12 rounded-full overflow-hidden">
               <img src={pizza1Img?.src || pizza1Img} alt="mini" className="w-full h-full object-cover" />
             </div>
-            <div className="text-sm">
-              <div className="font-semibold">Limited Offer</div>
-              <div className="text-xs text-gray-500">Get 10% off your first order</div>
-            </div>
+      
           </div>
         </div>
       </section>
