@@ -6,15 +6,12 @@ import pizza2Img from './pizza2.jpg'
 import pizza3Img from './pizza3.jpg'
 import pizza4Img from './pizza4.jpg'
 import BackgroundVideos from '../components/BackgroundVideos'
-import vid1 from './vid1.mp4'
-import vid2 from './vid2.mp4'
-import vid3 from './vid3.mp4'
 
 export default async function Home(){
   return (
     <main className="min-h-screen bg-gradient-to-b from-white via-yellow-50 to-white">
-      {/* Background videos (place your 3 video files in public/videos as bg1.mp4, bg2.mp4, bg3.mp4 or change sources) */}
-  <BackgroundVideos sources={[vid1, vid2, vid3]} />
+      {/* Background videos played from public/videos directory */}
+      <BackgroundVideos sources={['/videos/vid1.mp4', '/videos/vid2.mp4', '/videos/vid3.mp4']} />
       <section className="max-w-7xl mx-auto px-6 py-16 lg:py-24 grid gap-12 lg:grid-cols-2 items-center">
         <div className="space-y-6">
           <div className="inline-flex items-center gap-3 bg-red-50 text-red-700 px-3 py-1 rounded-full text-sm font-medium w-max shadow-sm">
