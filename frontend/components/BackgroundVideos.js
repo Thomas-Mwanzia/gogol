@@ -2,11 +2,10 @@
 import React, { useEffect, useRef, useState } from 'react'
 
 export default function BackgroundVideos({ sources = ['/videos/bg1.mp4', '/videos/bg2.mp4', '/videos/bg3.mp4'] }){
-  const [index, setIndex] = useState(0)
-  const [nextIndex, setNextIndex] = useState(1)
+  const videoRefs = [useRef(null), useRef(null)]
+  const frontRef = useRef(0) // which video element is currently visible (0 or 1)
+  const indexRef = useRef(0) // index into sources for the front video
   const [isTransitioning, setIsTransitioning] = useState(false)
-  const currentVideoRef = useRef(null)
-  const nextVideoRef = useRef(null)
 
   // helper to resolve imported asset modules or plain strings
   const resolveSrc = (s) => {
@@ -16,76 +15,101 @@ export default function BackgroundVideos({ sources = ['/videos/bg1.mp4', '/video
   }
 
   useEffect(() => {
-    const currentVideo = currentVideoRef.current
-    const nextVideo = nextVideoRef.current
-    if (!currentVideo || !nextVideo) return
+    if (!sources || sources.length === 0) return
 
-    currentVideo.src = resolveSrc(sources[index])
-    nextVideo.src = resolveSrc(sources[nextIndex])
+    // initialize indices
+    indexRef.current = 0
+    frontRef.current = 0
+    const nextIndex = (indexRef.current + 1) % sources.length
 
-    const loadAndPlay = async (video) => {
+    const frontVid = videoRefs[frontRef.current].current
+    const backVid = videoRefs[1 - frontRef.current].current
+    if (!frontVid || !backVid) return
+
+    // set sources and preload
+    frontVid.src = resolveSrc(sources[indexRef.current])
+    frontVid.preload = 'auto'
+    backVid.src = resolveSrc(sources[nextIndex])
+    backVid.preload = 'auto'
+
+    let mounted = true
+
+    const playFront = async () => {
+      try { await frontVid.play() } catch (e) { /* autoplay may be blocked; user interaction may be required */ }
+    }
+    playFront()
+
+    const handleEnded = async () => {
+      if (!mounted) return
+      const front = frontRef.current
+      const back = 1 - front
+      const frontVideo = videoRefs[front].current
+      const backVideo = videoRefs[back].current
+      if (!backVideo || !frontVideo) return
+
+      // ensure back video is at start and play it immediately
       try {
-        await video.load()
-        // Set playback quality to high
-        if (video.getVideoPlaybackQuality) {
-          const quality = video.getVideoPlaybackQuality()
-          if (quality && quality.totalVideoFrames > 0) {
-            video.playbackQuality = 'high'
-          }
-        }
-        await video.play()
-      } catch (e) { console.error('Playback error:', e) }
-    }
+        backVideo.currentTime = 0
+        await backVideo.play()
+      } catch (e) { console.error('Error starting next video:', e) }
 
-    loadAndPlay(currentVideo)
-    // Preload next video
-    nextVideo.load()
-
-    const handleTransition = async () => {
+      // crossfade by toggling transition state
       setIsTransitioning(true)
-      // Start playing next video
-      await loadAndPlay(nextVideo)
-      
-      // Update indices
-      const newIndex = (index + 1) % sources.length
-      const newNextIndex = (newIndex + 1) % sources.length
-      
-      setIndex(newIndex)
-      setNextIndex(newNextIndex)
-      setIsTransitioning(false)
+
+      // after crossfade duration, swap front and prepare next back video
+      const crossfadeMs = 350
+      setTimeout(() => {
+        // advance indexes
+        indexRef.current = (indexRef.current + 1) % sources.length
+        const upcoming = (indexRef.current + 1) % sources.length
+
+        // pause the old front to free resources
+        try { frontVideo.pause() } catch (e) {}
+
+        // set the new back video's src to the upcoming video and preload
+        const newBack = videoRefs[1 - frontRef.current].current
+        if (newBack) {
+          newBack.src = resolveSrc(sources[upcoming])
+          newBack.preload = 'auto'
+        }
+
+        // flip which element is front
+        frontRef.current = 1 - frontRef.current
+        setIsTransitioning(false)
+      }, crossfadeMs)
     }
 
-    currentVideo.addEventListener('timeupdate', () => {
-      // Start transition 0.5 seconds before video ends
-      if (currentVideo.duration - currentVideo.currentTime <= 0.5 && !isTransitioning) {
-        handleTransition()
-      }
-    })
+    // attach ended listener to the current front video
+    frontVid.removeEventListener('ended', handleEnded)
+    frontVid.addEventListener('ended', handleEnded)
 
     return () => {
-      if (currentVideo) {
-        currentVideo.pause()
-        currentVideo.removeEventListener('timeupdate', handleTransition)
-      }
-      if (nextVideo) {
-        nextVideo.pause()
-      }
+      mounted = false
+      try { frontVid.removeEventListener('ended', handleEnded) } catch (e) {}
+      try { videoRefs[0].current?.pause(); videoRefs[1].current?.pause() } catch (e) {}
     }
-  }, [index, nextIndex, sources, isTransitioning])
+  }, [sources])
+
+  // compute which element is visible and apply opacity classes
+  const front = frontRef.current
+  const frontClass = isTransitioning ? 'opacity-0' : 'opacity-100'
+  const backClass = isTransitioning ? 'opacity-100' : 'opacity-0'
 
   return (
     <div aria-hidden className="fixed inset-0 -z-10 pointer-events-none overflow-hidden">
       <video
-        ref={currentVideoRef}
+        ref={videoRefs[0]}
         muted
         playsInline
-        className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}
+        preload="auto"
+        className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${front === 0 ? frontClass : backClass}`}
       />
       <video
-        ref={nextVideoRef}
+        ref={videoRefs[1]}
         muted
         playsInline
-        className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${isTransitioning ? 'opacity-100' : 'opacity-0'}`}
+        preload="auto"
+        className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${front === 1 ? frontClass : backClass}`}
       />
       {/* subtle overlay for readability */}
       <div className="absolute inset-0 bg-black/20" />

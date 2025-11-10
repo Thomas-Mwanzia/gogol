@@ -10,8 +10,8 @@ import BackgroundVideos from '../components/BackgroundVideos'
 export default async function Home(){
   return (
     <main className="min-h-screen">
-      {/* Background videos played from public/videos directory */}
-      <BackgroundVideos sources={['/videos/vid1.mp4', '/videos/vid2.mp4', '/videos/vid3.mp4']} />
+  {/* Background videos played from public/videos directory (vid1 removed due to glitches) */}
+  <BackgroundVideos sources={['/videos/vid2.mp4', '/videos/vid3.mp4']} />
       <section className="relative max-w-7xl mx-auto px-6 py-16 lg:py-24 grid gap-12 lg:grid-cols-2 items-center bg-white/70 backdrop-blur-sm">
         <div className="space-y-6">
           <div className="inline-flex items-center gap-3 bg-red-50 text-red-700 px-3 py-1 rounded-full text-sm font-medium w-max shadow-sm">
